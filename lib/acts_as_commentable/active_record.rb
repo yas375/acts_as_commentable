@@ -18,9 +18,13 @@ module ActsAsCommentable
     end
 
     module InstanceMethods
-      # there should be an author method in your commentable model
       def create_root_comment
-        Comment.create(:commentable => self, :text => 'root', :author => author)
+        @author = if self.respond_to? :created_by
+                    self.created_by
+                  elsif self.respond_to? :author
+                    self.author
+                  end
+        Comment.create(:commentable => self, :text => 'root', :author => @author)
       end
     end
   end
